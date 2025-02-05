@@ -1,0 +1,18 @@
+fun getProxyPing(proxy: String, port: Int): Long {
+    return try {
+        val start = System.currentTimeMillis()
+        val socket = Socket()
+        socket.connect(InetSocketAddress(proxy, port), 3000) // تایم‌اوت ۳ ثانیه
+        socket.close()
+        System.currentTimeMillis() - start // مقدار پینگ
+    } catch (e: Exception) {
+        Long.MAX_VALUE // اگر وصل نشد، مقدار غیرمعتبر
+    }
+}
+
+fun findBestProxy(proxies: List<Pair<String, Int>>): Pair<String, Int>? {
+    return proxies
+        .map { it to getProxyPing(it.first, it.second) }
+        .filter { it.second < Long.MAX_VALUE } // فقط پراکسی‌های سالم
+        .minByOrNull { it.second }?.first // کمترین پینگ
+}

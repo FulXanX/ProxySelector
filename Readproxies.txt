@@ -1,0 +1,20 @@
+fun readProxiesFromFile(context: Context, uri: Uri): List<Pair<String, Int>> {
+    val proxies = mutableListOf<Pair<String, Int>>()
+    try {
+        context.contentResolver.openInputStream(uri)?.bufferedReader()?.useLines { lines ->
+            lines.forEach {  
+                val parts = it.split(":")
+                if (parts.size == 2) {
+                    val ip = parts[0]
+                    val port = parts[1].toIntOrNull()
+                    if (port != null) {
+                        proxies.add(Pair(ip, port))
+                    }
+                }
+            }
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return proxies
+}
